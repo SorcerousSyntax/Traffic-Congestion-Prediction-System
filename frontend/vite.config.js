@@ -5,6 +5,24 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true
+    host: true,
+    proxy: {
+      '/sensors': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      },
+      '/metrics': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      },
+      '/health': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      },
+      '/history': {
+        target: 'http://localhost:5000',
+        changeOrigin: true
+      }
+    }
   }
 })

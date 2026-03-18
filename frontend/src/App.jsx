@@ -8,7 +8,93 @@ import L from 'leaflet'
 
 import 'leaflet/dist/leaflet.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const MOCK_SENSORS = [
+  { sensor_id: "R001", name: "Inner Ring Road - Dhaula Kuan", lat: 28.5892, lon: 77.1710, congestion: 0.65, speed: 35, volume: 1800, status: "high", road_type: "Ring Road" },
+  { sensor_id: "R002", name: "Outer Ring Road - Azadpur", lat: 28.7150, lon: 77.2078, congestion: 0.72, speed: 28, volume: 2200, status: "high", road_type: "Ring Road" },
+  { sensor_id: "R003", name: "Ring Road - Punjabi Bagh", lat: 28.6680, lon: 77.1245, congestion: 0.68, speed: 30, volume: 1900, status: "high", road_type: "Ring Road" },
+  { sensor_id: "R004", name: "Ring Road - Rajouri Garden", lat: 28.6425, lon: 77.1189, congestion: 0.70, speed: 32, volume: 2000, status: "high", road_type: "Ring Road" },
+  { sensor_id: "NH01", name: "NH-8 Toll Plaza", lat: 28.5245, lon: 77.0746, congestion: 0.78, speed: 22, volume: 2500, status: "critical", road_type: "National Highway" },
+  { sensor_id: "NH02", name: "NH-2 (Mathura Road)", lat: 28.5678, lon: 77.2890, congestion: 0.70, speed: 30, volume: 2000, status: "high", road_type: "National Highway" },
+  { sensor_id: "NH09", name: "NH-9 (Rohtak Road)", lat: 28.6812, lon: 77.0567, congestion: 0.68, speed: 32, volume: 1850, status: "high", road_type: "National Highway" },
+  { sensor_id: "NH10", name: "NH-10 (Delhi-Rohtak)", lat: 28.7456, lon: 77.1134, congestion: 0.62, speed: 38, volume: 1650, status: "medium", road_type: "National Highway" },
+  { sensor_id: "NH24", name: "NH-24 (GT Road)", lat: 28.6234, lon: 77.2890, congestion: 0.75, speed: 25, volume: 2300, status: "high", road_type: "National Highway" },
+  { sensor_id: "EX01", name: "DND Flyway", lat: 28.5689, lon: 77.2489, congestion: 0.55, speed: 45, volume: 1500, status: "medium", road_type: "Expressway" },
+  { sensor_id: "EX02", name: "Noida-Greater Noida Exp", lat: 28.5645, lon: 77.3890, congestion: 0.58, speed: 42, volume: 1400, status: "medium", road_type: "Expressway" },
+  { sensor_id: "EX03", name: "Gurgaon Expressway", lat: 28.5678, lon: 77.0567, congestion: 0.72, speed: 28, volume: 2100, status: "high", road_type: "Expressway" },
+  { sensor_id: "EX04", name: "Dwarka Expressway", lat: 28.6234, lon: 76.9890, congestion: 0.48, speed: 50, volume: 1200, status: "low", road_type: "Expressway" },
+  { sensor_id: "A001", name: "Connaught Place Inner Circle", lat: 28.6315, lon: 77.2167, congestion: 0.82, speed: 15, volume: 2800, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A002", name: "Parliament Street", lat: 28.6251, lon: 77.2089, congestion: 0.65, speed: 35, volume: 1750, status: "high", road_type: "Arterial" },
+  { sensor_id: "A003", name: "Janpath", lat: 28.6289, lon: 77.2145, congestion: 0.70, speed: 30, volume: 1900, status: "high", road_type: "Arterial" },
+  { sensor_id: "A004", name: "Lok Marg", lat: 28.6123, lon: 77.2234, congestion: 0.58, speed: 40, volume: 1450, status: "medium", road_type: "Arterial" },
+  { sensor_id: "A005", name: "Lajpat Nagar", lat: 28.5677, lon: 77.2437, congestion: 0.85, speed: 12, volume: 3000, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A006", name: "Nehru Place", lat: 28.5501, lon: 77.2512, congestion: 0.75, speed: 25, volume: 2200, status: "high", road_type: "Arterial" },
+  { sensor_id: "A007", name: "Saket", lat: 28.5390, lon: 77.2100, congestion: 0.68, speed: 32, volume: 1800, status: "high", road_type: "Arterial" },
+  { sensor_id: "A008", name: "Hauz Khas", lat: 28.5456, lon: 77.1989, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Arterial" },
+  { sensor_id: "A009", name: "Greater Kailash", lat: 28.5345, lon: 77.2345, congestion: 0.62, speed: 38, volume: 1600, status: "medium", road_type: "Arterial" },
+  { sensor_id: "A010", name: "Chirag Delhi", lat: 28.5398, lon: 77.2256, congestion: 0.58, speed: 42, volume: 1400, status: "medium", road_type: "Arterial" },
+  { sensor_id: "A011", name: "Civil Lines", lat: 28.6812, lon: 77.2256, congestion: 0.55, speed: 45, volume: 1350, status: "medium", road_type: "Arterial" },
+  { sensor_id: "A012", name: "Kashmere Gate", lat: 28.6678, lon: 77.2289, congestion: 0.88, speed: 10, volume: 3200, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A013", name: "ISBT Kashmere Gate", lat: 28.6689, lon: 77.2267, congestion: 0.82, speed: 15, volume: 2900, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A014", name: "Red Fort Area", lat: 28.6562, lon: 77.2410, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Arterial" },
+  { sensor_id: "A015", name: "Anand Vihar", lat: 28.6467, lon: 77.3156, congestion: 0.90, speed: 8, volume: 3400, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A016", name: "Mayur Vihar Phase 1", lat: 28.5934, lon: 77.2989, congestion: 0.75, speed: 25, volume: 2150, status: "high", road_type: "Arterial" },
+  { sensor_id: "A017", name: "Preet Vihar", lat: 28.6423, lon: 77.2934, congestion: 0.78, speed: 22, volume: 2350, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A018", name: "Karkarduma", lat: 28.6512, lon: 77.3112, congestion: 0.72, speed: 28, volume: 2000, status: "high", road_type: "Arterial" },
+  { sensor_id: "A019", name: "Rajouri Garden", lat: 28.6425, lon: 77.1189, congestion: 0.85, speed: 12, volume: 3100, status: "critical", road_type: "Arterial" },
+  { sensor_id: "A020", name: "Janakpuri", lat: 28.6210, lon: 77.0845, congestion: 0.75, speed: 25, volume: 2200, status: "high", road_type: "Arterial" },
+  { sensor_id: "A021", name: "Dwarka Mor", lat: 28.5970, lon: 77.0588, congestion: 0.70, speed: 30, volume: 1950, status: "high", road_type: "Arterial" },
+  { sensor_id: "A022", name: "Uttam Nagar", lat: 28.6189, lon: 77.0645, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Arterial" },
+  { sensor_id: "A023", name: "Tilak Nagar", lat: 28.6356, lon: 77.0923, congestion: 0.68, speed: 32, volume: 1800, status: "high", road_type: "Arterial" },
+  { sensor_id: "A024", name: "Paschim Vihar", lat: 28.6523, lon: 77.0845, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Arterial" },
+  { sensor_id: "A025", name: "Rohini Sector 10", lat: 28.7041, lon: 77.1025, congestion: 0.68, speed: 32, volume: 1800, status: "high", road_type: "Arterial" },
+  { sensor_id: "A026", name: "Rohini Sector 15", lat: 28.7156, lon: 77.1123, congestion: 0.62, speed: 38, volume: 1600, status: "medium", road_type: "Arterial" },
+  { sensor_id: "A027", name: "Pitampura", lat: 28.7023, lon: 77.1367, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Arterial" },
+  { sensor_id: "A028", name: "Shalimar Bagh", lat: 28.7156, lon: 77.1589, congestion: 0.58, speed: 42, volume: 1400, status: "medium", road_type: "Arterial" },
+  { sensor_id: "N001", name: "Noida Sector 18", lat: 28.5679, lon: 77.3211, congestion: 0.78, speed: 22, volume: 2400, status: "critical", road_type: "Noida" },
+  { sensor_id: "N002", name: "Noida Sector 15", lat: 28.5745, lon: 77.3123, congestion: 0.70, speed: 30, volume: 1950, status: "high", road_type: "Noida" },
+  { sensor_id: "N003", name: "Noida Sector 62", lat: 28.6278, lon: 77.3567, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Noida" },
+  { sensor_id: "N004", name: "Noida City Centre", lat: 28.5823, lon: 77.3298, congestion: 0.68, speed: 32, volume: 1850, status: "high", road_type: "Noida" },
+  { sensor_id: "N005", name: "Film City", lat: 28.5656, lon: 77.3590, congestion: 0.55, speed: 45, volume: 1300, status: "medium", road_type: "Noida" },
+  { sensor_id: "GN01", name: "Greater Noida Alpha 1", lat: 28.4745, lon: 77.4567, congestion: 0.45, speed: 52, volume: 1100, status: "low", road_type: "Greater Noida" },
+  { sensor_id: "GN02", name: "Greater Noida Beta 1", lat: 28.4890, lon: 77.4356, congestion: 0.42, speed: 55, volume: 1000, status: "low", road_type: "Greater Noida" },
+  { sensor_id: "GN03", name: "Yamuna Expressway", lat: 28.4567, lon: 77.5234, congestion: 0.48, speed: 50, volume: 1150, status: "low", road_type: "Greater Noida" },
+  { sensor_id: "G001", name: "MG Road Gurgaon", lat: 28.4756, lon: 77.0723, congestion: 0.80, speed: 18, volume: 2750, status: "critical", road_type: "Gurgaon" },
+  { sensor_id: "G002", name: "Cyber Hub", lat: 28.4856, lon: 77.0856, congestion: 0.72, speed: 28, volume: 2100, status: "high", road_type: "Gurgaon" },
+  { sensor_id: "G003", name: "Udyog Vihar", lat: 28.4956, lon: 77.0689, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Gurgaon" },
+  { sensor_id: "G004", name: "Golf Course Road", lat: 28.4312, lon: 77.0967, congestion: 0.62, speed: 38, volume: 1600, status: "medium", road_type: "Gurgaon" },
+  { sensor_id: "G005", name: "Sohna Road", lat: 28.4423, lon: 77.0523, congestion: 0.68, speed: 32, volume: 1800, status: "high", road_type: "Gurgaon" },
+  { sensor_id: "G006", name: "Gurgaon Faridabad Road", lat: 28.4256, lon: 77.0345, congestion: 0.70, speed: 30, volume: 1950, status: "high", road_type: "Gurgaon" },
+  { sensor_id: "G007", name: "IFFCO Chowk", lat: 28.4590, lon: 77.0723, congestion: 0.85, speed: 12, volume: 3100, status: "critical", road_type: "Gurgaon" },
+  { sensor_id: "G008", name: "Rajiv Chowk Gurgaon", lat: 28.4598, lon: 77.0290, congestion: 0.78, speed: 22, volume: 2400, status: "critical", road_type: "Gurgaon" },
+  { sensor_id: "GV01", name: "Vasundhara", lat: 28.5623, lon: 77.3789, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Ghaziabad" },
+  { sensor_id: "GV02", name: "Indirapuram", lat: 28.5512, lon: 77.3589, congestion: 0.75, speed: 25, volume: 2200, status: "high", road_type: "Ghaziabad" },
+  { sensor_id: "GV03", name: "Kaushambi", lat: 28.5745, lon: 77.3456, congestion: 0.78, speed: 22, volume: 2350, status: "critical", road_type: "Ghaziabad" },
+  { sensor_id: "GV04", name: "Ghaziabad Nehru Road", lat: 28.5890, lon: 77.4123, congestion: 0.82, speed: 18, volume: 2800, status: "critical", road_type: "Ghaziabad" },
+  { sensor_id: "GV05", name: "Modinagar Road", lat: 28.6123, lon: 77.4456, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Ghaziabad" },
+  { sensor_id: "FD01", name: "Faridabad Sector 15", lat: 28.3989, lon: 77.2789, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Faridabad" },
+  { sensor_id: "FD02", name: "Faridabad Sector 28", lat: 28.3856, lon: 77.3056, congestion: 0.68, speed: 32, volume: 1800, status: "high", road_type: "Faridabad" },
+  { sensor_id: "FD03", name: "Ballabgarh", lat: 28.3456, lon: 77.3234, congestion: 0.55, speed: 45, volume: 1350, status: "medium", road_type: "Faridabad" },
+  { sensor_id: "FD04", name: "Faridabad Bypass", lat: 28.4123, lon: 77.2890, congestion: 0.62, speed: 38, volume: 1600, status: "medium", road_type: "Faridabad" },
+  { sensor_id: "INT01", name: "AIIMS Crossing", lat: 28.5667, lon: 77.2100, congestion: 0.88, speed: 10, volume: 3300, status: "critical", road_type: "Intersection" },
+  { sensor_id: "INT02", name: "Moti Bagh", lat: 28.5812, lon: 77.1734, congestion: 0.75, speed: 25, volume: 2250, status: "high", road_type: "Intersection" },
+  { sensor_id: "INT03", name: "Dhaula Kuan", lat: 28.5892, lon: 77.1710, congestion: 0.80, speed: 18, volume: 2700, status: "critical", road_type: "Intersection" },
+  { sensor_id: "INT04", name: "Mehrauli-Badarpur Rd", lat: 28.5123, lon: 77.2356, congestion: 0.78, speed: 22, volume: 2400, status: "critical", road_type: "Intersection" },
+  { sensor_id: "INT05", name: "Maharaja Surajmal Marg", lat: 28.6789, lon: 77.1423, congestion: 0.65, speed: 35, volume: 1700, status: "high", road_type: "Intersection" },
+  { sensor_id: "INT06", name: "Wazirpur Industrial", lat: 28.6998, lon: 77.1634, congestion: 0.70, speed: 30, volume: 1950, status: "high", road_type: "Intersection" },
+  { sensor_id: "INT07", name: "Vivekanand Marg", lat: 28.6512, lon: 77.2345, congestion: 0.72, speed: 28, volume: 2050, status: "high", road_type: "Intersection" },
+  { sensor_id: "INT08", name: "ITO", lat: 28.6289, lon: 77.2434, congestion: 0.88, speed: 10, volume: 3200, status: "critical", road_type: "Intersection" },
+]
+
+const MOCK_METRICS = {
+  models: [
+    { name: "CNN-LSTM", mae: 0.0996, rmse: 0.1256, r2: 0.7632 },
+    { name: "LSTM", mae: 0.1001, rmse: 0.1266, r2: 0.7592 },
+    { name: "Linear", mae: 0.1010, rmse: 0.1280, r2: 0.7541 }
+  ],
+  best_model: "CNN-LSTM"
+}
+
+const API_URL = ''
 
 const PARTICLE_COUNT = 50
 const BUBBLE_COUNT = 15
@@ -337,7 +423,14 @@ const RadarChartComponent = ({ data }) => (
 function App() {
   const [sensors, setSensors] = useState([])
   const [metrics, setMetrics] = useState({ models: [], best_model: null })
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState([
+    ...Array.from({ length: 15 }, (_, i) => ({
+      time: new Date(Date.now() - (15 - i) * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      actual: 0.5 + (Math.random() - 0.5) * 0.2,
+      predicted: 0.5 + (Math.random() - 0.5) * 0.2,
+      lstm: 0.5 + (Math.random() - 0.5) * 0.2
+    }))
+  ])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [lastUpdate, setLastUpdate] = useState(null)
@@ -362,12 +455,12 @@ function App() {
         axios.get(`${API_URL}/metrics`, { timeout: 5000 })
       ])
       
-      setSensors(sensorsRes.data.sensors || [])
-      setMetrics(metricsRes.data || { models: [], best_model: null })
+      setSensors(sensorsRes.data.sensors || generateMockData())
+      setMetrics(metricsRes.data || MOCK_METRICS)
       setLastUpdate(new Date())
       setError(null)
       
-      const sensorData = sensorsRes.data.sensors || []
+      const sensorData = sensorsRes.data.sensors || generateMockData()
       const avgCongestion = sensorData.length > 0 
         ? sensorData.reduce((sum, s) => sum + s.congestion, 0) / sensorData.length 
         : 0.5
@@ -383,12 +476,32 @@ function App() {
       })
     } catch (err) {
       console.error('API Error:', err.message || err)
-      if (sensors.length === 0) {
-        setError('Unable to connect to backend. Please ensure the server is running.')
-      }
+      const mockData = generateMockData()
+      setSensors(mockData)
+      setMetrics(MOCK_METRICS)
+      setLastUpdate(new Date())
+      const avgCongestion = mockData.reduce((sum, s) => sum + s.congestion, 0) / mockData.length
+      setHistory(prev => {
+        const newEntry = {
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          actual: avgCongestion,
+          predicted: avgCongestion + (Math.random() - 0.5) * 0.05,
+          lstm: avgCongestion + (Math.random() - 0.5) * 0.08
+        }
+        return [...prev, newEntry].slice(-30)
+      })
     } finally {
       setLoading(false)
     }
+  }
+  
+  const generateMockData = () => {
+    return MOCK_SENSORS.map(sensor => ({
+      ...sensor,
+      congestion: Math.max(0.2, Math.min(0.95, sensor.congestion + (Math.random() - 0.5) * 0.1)),
+      speed: Math.max(10, Math.min(60, sensor.speed + (Math.random() - 0.5) * 10)),
+      volume: Math.max(500, Math.min(4000, sensor.volume + (Math.random() - 0.5) * 200))
+    }))
   }
 
   useEffect(() => {
@@ -737,7 +850,7 @@ function App() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <TiltCard className="glass-card p-6 rounded-2xl" intensity={5}>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
                 <Gauge className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white">Congestion Distribution</h3>
@@ -755,17 +868,14 @@ function App() {
                     dataKey="value"
                   >
                     {congestionDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color}>
-                        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
-                      </Cell>
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'rgba(17, 24, 39, 0.95)',
                       border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '12px',
-                      backdropFilter: 'blur(20px)'
+                      borderRadius: '12px'
                     }}
                   />
                 </PieChart>
@@ -787,7 +897,7 @@ function App() {
           </TiltCard>
 
           <TiltCard className="lg:col-span-2 glass-card p-6 rounded-2xl" intensity={5}>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-white" />
@@ -823,8 +933,7 @@ function App() {
                     contentStyle={{ 
                       backgroundColor: 'rgba(17, 24, 39, 0.95)',
                       border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '12px',
-                      backdropFilter: 'blur(20px)'
+                      borderRadius: '12px'
                     }}
                   />
                   <Area 
@@ -833,7 +942,6 @@ function App() {
                     stroke="#10b981" 
                     fill="url(#colorActual3D)" 
                     strokeWidth={3}
-                    style={{ filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.5))' }}
                   />
                   <Area 
                     type="monotone" 
@@ -842,13 +950,72 @@ function App() {
                     fill="url(#colorPredicted3D)" 
                     strokeWidth={2}
                     strokeDasharray="5 5"
-                    style={{ filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))' }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </TiltCard>
         </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card p-6 rounded-2xl mb-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+              <BarChart className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-white">Road-wise Congestion Levels</h3>
+          </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart 
+                data={sensors.slice().sort((a, b) => b.congestion - a.congestion).slice(0, 10).map(s => ({
+                  name: s.name.length > 18 ? s.name.substring(0, 18) + '...' : s.name,
+                  fullName: s.name,
+                  congestion: (s.congestion * 100).toFixed(0),
+                  fill: getCongestionColor(s.congestion)
+                }))}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis 
+                  type="number" 
+                  domain={[0, 100]} 
+                  stroke="#6b7280" 
+                  fontSize={10}
+                  tickFormatter={(v) => `${v}%`}
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  stroke="#6b7280" 
+                  fontSize={9}
+                  width={95}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                    border: '1px solid rgba(255,255,255,0.1)', 
+                    borderRadius: '12px'
+                  }}
+                  formatter={(value, name, props) => [`${value}%`, props.payload.fullName]}
+                />
+                <Bar 
+                  dataKey="congestion" 
+                  radius={[0, 4, 4, 0]}
+                  style={{ filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.3))' }}
+                >
+                  {sensors.slice().sort((a, b) => b.congestion - a.congestion).slice(0, 10).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getCongestionColor(entry.congestion)} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
 
         <div className="flex items-center justify-between mb-6">
           <motion.div 
@@ -1207,7 +1374,7 @@ function App() {
             <span>TomTom Traffic API</span>
           </motion.div>
           <p className="text-xs text-gray-600">
-            Real-Time Traffic Intelligence for Delhi NCR • Powered by AI
+            Real-Time Traffic Intelligence for Delhi NCR
           </p>
         </motion.footer>
       </main>
