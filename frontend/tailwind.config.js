@@ -15,12 +15,12 @@ export default {
           600: '#475569',
         },
         'accent': {
-          cyan: '#22d3ee',
-          violet: '#8b5cf6',
-          pink: '#f472b6',
-          emerald: '#10b981',
-          amber: '#f59e0b',
-          rose: '#f43f5e',
+          teal: '#2a9d8f',
+          sand: '#e9c46a',
+          clay: '#f4a261',
+          rust: '#e76f51',
+          crimson: '#c1121f',
+          moss: '#7aa874',
         }
       },
       fontFamily: {

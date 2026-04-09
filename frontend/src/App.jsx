@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts'
-import { MapContainer, TileLayer, Marker, Popup, Circle, CircleMarker, Polyline, Tooltip as MapTooltip } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Circle, CircleMarker, Polyline, Tooltip as MapTooltip, useMap } from 'react-leaflet'
 import { Activity, MapPin, TrendingUp, AlertTriangle, Clock, Wifi, Car, Users, Zap, Award, ChevronUp, ChevronDown, RefreshCw, Filter, Radio, Gauge, Navigation, Layers, Wind, Route, Orbit, Cpu, Database, Signal } from 'lucide-react'
 import axios from 'axios'
 import L from 'leaflet'
@@ -125,12 +125,37 @@ const ROAD_SEGMENTS = {
   "INT08": { name: "ITO", coords: [[28.6289, 77.2434], [28.6245, 77.2378], [28.6201, 77.2323]], type: "Intersection" },
 }
 
+const TILE_STYLES = {
+  night: {
+    label: 'Night Grid',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
+  },
+  terrain: {
+    label: 'Terrain Light',
+    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }
+}
+
+const MapAutoFocus = ({ sensor }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (sensor?.lat && sensor?.lon) {
+      map.flyTo([sensor.lat, sensor.lon], 12, { duration: 1.2 })
+    }
+  }, [map, sensor])
+
+  return null
+}
+
 const getCongestionColor = (congestion) => {
-  if (congestion < 0.3) return '#10b981' // Emerald
-  if (congestion < 0.5) return '#22d3ee' // Cyan
-  if (congestion < 0.65) return '#f59e0b' // Amber
-  if (congestion < 0.8) return '#f97316' // Orange
-  return '#f43f5e' // Rose/Pink
+  if (congestion < 0.3) return '#2a9d8f' // Teal
+  if (congestion < 0.5) return '#e9c46a' // Sand
+  if (congestion < 0.65) return '#f4a261' // Clay
+  if (congestion < 0.8) return '#e76f51' // Burnt Orange
+  return '#c1121f' // Crimson
 }
 
 function generateParticles() {
@@ -141,7 +166,7 @@ function generateParticles() {
     size: Math.random() * 4 + 1,
     duration: Math.random() * 20 + 10,
     delay: Math.random() * 10,
-    color: ['#22d3ee', '#8b5cf6', '#f472b6', '#10b981', '#f59e0b'][Math.floor(Math.random() * 5)]
+    color: ['#2a9d8f', '#e9c46a', '#f4a261', '#e76f51', '#c1121f'][Math.floor(Math.random() * 5)]
   }))
 }
 
@@ -152,7 +177,7 @@ function generateBubbles() {
     size: Math.random() * 60 + 20,
     duration: Math.random() * 15 + 10,
     delay: Math.random() * 5,
-    color: ['rgba(34, 211, 238, 0.1)', 'rgba(139, 92, 246, 0.1)', 'rgba(244, 114, 182, 0.1)'][Math.floor(Math.random() * 3)]
+    color: ['rgba(42, 157, 143, 0.08)', 'rgba(233, 196, 106, 0.08)', 'rgba(231, 111, 81, 0.08)'][Math.floor(Math.random() * 3)]
   }))
 }
 
@@ -221,16 +246,16 @@ const AnimatedGrid = () => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div className="absolute inset-0" style={{
       backgroundImage: `
-        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px)
+        linear-gradient(rgba(233, 196, 106, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(233, 196, 106, 0.03) 1px, transparent 1px)
       `,
       backgroundSize: '50px 50px',
       animation: 'gridMove 20s linear infinite'
     }} />
     <div className="absolute inset-0" style={{
       backgroundImage: `
-        linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px)
+        linear-gradient(rgba(42, 157, 143, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(42, 157, 143, 0.025) 1px, transparent 1px)
       `,
       backgroundSize: '100px 100px',
       animation: 'gridMove 40s linear infinite reverse'
@@ -328,19 +353,19 @@ const CircularProgress = ({ value, size = 120, strokeWidth = 8 }) => {
         initial={{ strokeDashoffset: circumference }}
         animate={{ strokeDashoffset: offset }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        style={{ filter: 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))' }}
+        style={{ filter: 'drop-shadow(0 0 10px rgba(244, 162, 97, 0.45))' }}
       />
       <defs>
         <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#8b5cf6" />
+          <stop offset="0%" stopColor="#f4a261" />
+          <stop offset="100%" stopColor="#2a9d8f" />
         </linearGradient>
       </defs>
     </svg>
   )
 }
 
-const PulsingRing = ({ size = 200, color = '#3b82f6' }) => (
+const PulsingRing = ({ size = 200, color = '#f4a261' }) => (
   <div className="relative" style={{ width: size, height: size }}>
     {[0, 1, 2].map((i) => (
       <motion.div
@@ -379,7 +404,7 @@ const AnimatedCounter = ({ value, duration = 2 }) => {
   return <span>{displayValue}</span>
 }
 
-const GlowingBorder = ({ children, color = '#3b82f6' }) => (
+const GlowingBorder = ({ children, color = '#f4a261' }) => (
   <motion.div
     className="relative rounded-2xl overflow-hidden"
     whileHover={{ scale: 1.02 }}
@@ -403,16 +428,16 @@ const RadarChartComponent = ({ data }) => (
       <Radar
         name="Performance"
         dataKey="A"
-        stroke="#22d3ee"
-        fill="#22d3ee"
+        stroke="#f4a261"
+        fill="#f4a261"
         fillOpacity={0.3}
         strokeWidth={3}
       />
       <Radar
         name="Efficiency"
         dataKey="B"
-        stroke="#8b5cf6"
-        fill="#8b5cf6"
+        stroke="#2a9d8f"
+        fill="#2a9d8f"
         fillOpacity={0.2}
         strokeWidth={3}
       />
@@ -437,6 +462,8 @@ function App() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [selectedRoadType, setSelectedRoadType] = useState('All')
   const [selectedSensor, setSelectedSensor] = useState(null)
+  const [mapStyle, setMapStyle] = useState('night')
+  const [flowTick, setFlowTick] = useState(0)
   const [filterOpen, setFilterOpen] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [particles] = useState(generateParticles)
@@ -508,6 +535,7 @@ function App() {
     fetchData()
     const interval = setInterval(fetchData, 5000)
     const timeInterval = setInterval(() => setCurrentTime(new Date()), 1000)
+    const flowInterval = setInterval(() => setFlowTick(prev => (prev + 1) % 300), 120)
     
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX)
@@ -520,6 +548,7 @@ function App() {
     return () => {
       clearInterval(interval)
       clearInterval(timeInterval)
+      clearInterval(flowInterval)
       window.removeEventListener('mousemove', handleMouseMove)
     }
   }, [])
@@ -539,11 +568,11 @@ function App() {
     : 0
 
   const getCongestionLevel = (value) => {
-    if (value < 0.3) return { label: 'Smooth', color: '#10b981', glow: 'shadow-emerald-500/50' }
-    if (value < 0.5) return { label: 'Light', color: '#84cc16', glow: 'shadow-lime-500/50' }
-    if (value < 0.65) return { label: 'Moderate', color: '#f59e0b', glow: 'shadow-yellow-500/50' }
-    if (value < 0.8) return { label: 'Heavy', color: '#f97316', glow: 'shadow-orange-500/50' }
-    return { label: 'Severe', color: '#ef4444', glow: 'shadow-red-500/50' }
+    if (value < 0.3) return { label: 'Smooth', color: '#2a9d8f', glow: 'shadow-emerald-500/50' }
+    if (value < 0.5) return { label: 'Light', color: '#e9c46a', glow: 'shadow-amber-500/50' }
+    if (value < 0.65) return { label: 'Moderate', color: '#f4a261', glow: 'shadow-orange-500/50' }
+    if (value < 0.8) return { label: 'Heavy', color: '#e76f51', glow: 'shadow-red-500/50' }
+    return { label: 'Severe', color: '#c1121f', glow: 'shadow-red-700/50' }
   }
 
   const level = getCongestionLevel(avgCongestion)
@@ -558,11 +587,11 @@ function App() {
       else dist.severe++
     })
     return [
-      { name: 'Smooth', value: dist.smooth, color: '#10b981' },
-      { name: 'Light', value: dist.light, color: '#84cc16' },
-      { name: 'Moderate', value: dist.moderate, color: '#f59e0b' },
-      { name: 'Heavy', value: dist.heavy, color: '#f97316' },
-      { name: 'Severe', value: dist.severe, color: '#ef4444' }
+      { name: 'Smooth', value: dist.smooth, color: '#2a9d8f' },
+      { name: 'Light', value: dist.light, color: '#e9c46a' },
+      { name: 'Moderate', value: dist.moderate, color: '#f4a261' },
+      { name: 'Heavy', value: dist.heavy, color: '#e76f51' },
+      { name: 'Severe', value: dist.severe, color: '#c1121f' }
     ]
   }, [sensors])
 
@@ -579,7 +608,7 @@ function App() {
     return (
       <div className="min-h-screen bg-dark-950 flex items-center justify-center relative overflow-hidden">
         <FloatingParticles />
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-violet-900/20 to-pink-900/20 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-emerald-900/20 to-pink-900/20 animate-pulse" />
         
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -588,12 +617,12 @@ function App() {
           className="text-center z-10 relative"
         >
           <div className="relative mb-8">
-            <PulsingRing size={150} color="#22d3ee" />
+            <PulsingRing size={150} color="#f4a261" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="w-24 h-24 border-4 border-cyan-500 border-t-transparent rounded-full"
+                className="w-24 h-24 border-4 border-amber-500 border-t-transparent rounded-full"
               />
             </div>
           </div>
@@ -603,13 +632,13 @@ function App() {
             transition={{ delay: 0.3 }}
             className="text-3xl text-white font-space font-light tracking-[0.2em] mb-4"
           >
-            TRAFFIC<span className="text-cyan-400 font-bold">IQ</span>
+            TRAFFIC<span className="text-amber-400 font-bold">IQ</span>
           </motion.p>
           <motion.div 
             initial={{ width: 0 }}
             animate={{ width: 240 }}
             transition={{ duration: 2, delay: 0.5 }}
-            className="h-0.5 bg-gradient-to-r from-cyan-500 via-violet-500 to-pink-500 rounded-full mx-auto"
+            className="h-0.5 bg-gradient-to-r from-amber-500 via-emerald-500 to-pink-500 rounded-full mx-auto"
           />
         </motion.div>
       </div>
@@ -634,7 +663,7 @@ function App() {
           </p>
           <motion.button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-medium"
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-500 rounded-xl text-white font-medium"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -649,6 +678,7 @@ function App() {
     <div className="min-h-screen bg-dark-950 font-inter relative overflow-hidden">
       <div className="scanline" />
       <div className="noise-bg" />
+      <div className="topo-overlay" />
       <AnimatedGrid />
       <FloatingParticles />
       <FloatingBubbles />
@@ -663,8 +693,8 @@ function App() {
         }}
       />
       
-      <MorphingShape className="top-20 -left-48" color="#22d3ee" />
-      <MorphingShape className="bottom-20 -right-48" color="#8b5cf6" />
+      <MorphingShape className="top-20 -left-48" color="#f4a261" />
+      <MorphingShape className="bottom-20 -right-48" color="#2a9d8f" />
 
       <nav className="glass-card border-b border-white/5 px-6 py-4 sticky top-0 z-50 bg-dark-950/40 backdrop-blur-3xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -678,16 +708,16 @@ function App() {
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 via-violet-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 via-emerald-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20">
                 <Navigation className="w-7 h-7 text-white" />
               </div>
-              <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-2xl blur-lg opacity-20 -z-10" />
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-emerald-500 rounded-2xl blur-lg opacity-20 -z-10" />
             </motion.div>
             <div>
               <motion.h1 
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="text-2xl font-space font-bold bg-gradient-to-r from-white via-cyan-100 to-violet-100 bg-clip-text text-transparent"
+                className="text-2xl font-space font-bold bg-gradient-to-r from-white via-amber-100 to-emerald-100 bg-clip-text text-transparent"
               >
                 TrafficIQ
               </motion.h1>
@@ -703,14 +733,14 @@ function App() {
             <div className="hidden md:flex items-center gap-4 px-4 py-2 rounded-2xl bg-white/5 border border-white/5">
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-tighter text-gray-500">System Pulse</p>
-                <p className="text-sm text-cyan-400 font-mono font-bold tracking-tighter">SYNCHRONIZED</p>
+                <p className="text-sm text-amber-400 font-mono font-bold tracking-tighter">SYNCHRONIZED</p>
               </div>
               <motion.div 
-                className="w-8 h-8 rounded-full border border-cyan-500/30 flex items-center justify-center"
+                className="w-8 h-8 rounded-full border border-amber-500/30 flex items-center justify-center"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               >
-                <Cpu className="w-4 h-4 text-cyan-400" />
+                <Cpu className="w-4 h-4 text-amber-400" />
               </motion.div>
             </div>
 
@@ -726,7 +756,7 @@ function App() {
               whileHover={{ rotate: 180, scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <RefreshCw className="w-5 h-5 text-cyan-400" />
+              <RefreshCw className="w-5 h-5 text-amber-400" />
             </motion.button>
           </motion.div>
         </div>
@@ -738,10 +768,10 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="relative mb-12"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-pink-500/10 rounded-3xl blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-pink-500/10 rounded-3xl blur-3xl" />
           <TiltCard className="relative glass-card p-12 rounded-[32px] overflow-hidden" intensity={5}>
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/10 to-transparent rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-violet-500/10 to-transparent rounded-full blur-[80px]" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-amber-500/10 to-transparent rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-emerald-500/10 to-transparent rounded-full blur-[80px]" />
             
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 relative">
               <div className="flex-1">
@@ -751,8 +781,8 @@ function App() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                    <MapPin className="w-5 h-5 text-cyan-400" />
+                  <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                    <MapPin className="w-5 h-5 text-amber-400" />
                   </div>
                   <motion.h2 
                     className="text-5xl font-space font-bold text-white tracking-tight"
@@ -771,7 +801,7 @@ function App() {
                   transition={{ delay: 0.4 }}
                 >
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-violet-400" />
+                    <Clock className="w-4 h-4 text-emerald-400" />
                     <span className="text-sm">{currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
                   </div>
                   <div className="w-1 h-1 rounded-full bg-gray-700" />
@@ -784,7 +814,7 @@ function App() {
                 
                 <div className="flex flex-wrap items-center gap-4 mt-8">
                   <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                     <span className="text-xs font-semibold text-gray-300 tracking-wide uppercase">
                       {sensors.length} Active Nodes
                     </span>
@@ -800,7 +830,7 @@ function App() {
               
               <div className="flex items-center gap-12 bg-white/[0.02] p-8 rounded-[40px] border border-white/5">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/30 transition-all duration-500" />
+                  <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/30 transition-all duration-500" />
                   <CircularProgress value={avgCongestion * 100} size={180} strokeWidth={12} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.span 
@@ -900,7 +930,7 @@ function App() {
           <TiltCard className="lg:col-span-2 glass-card p-8 rounded-3xl" intensity={2}>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -909,7 +939,7 @@ function App() {
                 </div>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5">
-                <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Stream</span>
               </div>
             </div>
@@ -919,12 +949,12 @@ function App() {
                 <AreaChart data={history}>
                   <defs>
                     <linearGradient id="colorActual3D" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#f4a261" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#f4a261" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorPredicted3D" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#2a9d8f" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#2a9d8f" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
@@ -941,15 +971,15 @@ function App() {
                   <Area 
                     type="monotone" 
                     dataKey="actual" 
-                    stroke="#22d3ee" 
+                    stroke="#f4a261" 
                     fill="url(#colorActual3D)" 
                     strokeWidth={4}
-                    style={{ filter: 'drop-shadow(0 0 12px rgba(34, 211, 238, 0.4))' }}
+                    style={{ filter: 'drop-shadow(0 0 12px rgba(244, 162, 97, 0.35))' }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="predicted" 
-                    stroke="#8b5cf6" 
+                    stroke="#2a9d8f" 
                     fill="url(#colorPredicted3D)" 
                     strokeWidth={2}
                     strokeDasharray="5 5"
@@ -966,7 +996,7 @@ function App() {
           className="glass-card p-8 rounded-3xl mb-12"
         >
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <BarChart className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -1040,7 +1070,7 @@ function App() {
           >
             <h3 className="text-2xl font-bold text-white">Delhi NCR Roads</h3>
             <motion.span 
-              className="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-400 border border-blue-500/30 backdrop-blur-sm"
+              className="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-amber-500/20 to-amber-500/20 text-amber-400 border border-amber-500/30 backdrop-blur-sm"
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -1086,7 +1116,7 @@ function App() {
                       }}
                       className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all ${
                         selectedRoadType === type 
-                          ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 text-white border border-blue-500/30' 
+                          ? 'bg-gradient-to-r from-amber-500/30 to-amber-500/30 text-white border border-amber-500/30' 
                           : 'text-gray-400 hover:bg-white/5 hover:text-white'
                       }`}
                       whileHover={{ x: 5 }}
@@ -1129,7 +1159,7 @@ function App() {
           <TiltCard className="glass-card p-8 rounded-3xl" intensity={4}>
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
                   <Orbit className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -1206,9 +1236,9 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card p-6 rounded-2xl mb-8"
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-emerald-500 flex items-center justify-center">
                 <Route className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white">Delhi/NCR Traffic Map</h3>
@@ -1216,18 +1246,37 @@ function App() {
                 {sensors.length} roads
               </span>
             </div>
+
+            <div className="flex items-center gap-2">
+              {Object.entries(TILE_STYLES).map(([key, style]) => (
+                <motion.button
+                  key={key}
+                  onClick={() => setMapStyle(key)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    mapStyle === key
+                      ? 'bg-gradient-to-r from-amber-500/30 to-emerald-500/30 text-white border border-amber-500/30'
+                      : 'bg-white/5 text-gray-400 border border-white/10 hover:text-white'
+                  }`}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  {style.label}
+                </motion.button>
+              ))}
+            </div>
           </div>
           
-          <div className="h-[500px] rounded-xl overflow-hidden relative">
+          <div className="h-[500px] rounded-xl overflow-hidden relative map-shell">
             <MapContainer 
               center={[28.6139, 77.2090]} 
               zoom={11} 
               style={{ height: '100%', width: '100%', borderRadius: '12px' }}
               className="z-0"
             >
+              <MapAutoFocus sensor={selectedSensor} />
               <TileLayer
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                attribution={TILE_STYLES[mapStyle].attribution}
+                url={TILE_STYLES[mapStyle].url}
               />
               
               {Object.entries(ROAD_SEGMENTS).map(([id, road]) => {
@@ -1236,6 +1285,8 @@ function App() {
                 const color = getCongestionColor(congestion)
                 const opacity = 0.4 + (congestion * 0.5)
                 const isSelected = selectedSensor?.sensor_id === id
+                const beaconRadius = (isSelected ? 9 : 6) + ((flowTick % 24) / 12)
+                const pulseOpacity = isSelected ? 0.4 : 0.22
                 
                 return (
                   <React.Fragment key={id}>
@@ -1278,10 +1329,33 @@ function App() {
                         </div>
                       </MapTooltip>
                     </Polyline>
+
+                    <Polyline
+                      positions={road.coords}
+                      pathOptions={{
+                        color: '#f8fafc',
+                        weight: isSelected ? 4 : 2,
+                        opacity: isSelected ? 0.45 : 0.25,
+                        dashArray: isSelected ? '14 10' : '10 14',
+                        dashOffset: `${flowTick * 3}`
+                      }}
+                    />
                     
                     <CircleMarker
                       center={road.coords[Math.floor(road.coords.length / 2)]}
-                      radius={5}
+                      radius={beaconRadius + 5}
+                      pathOptions={{
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: pulseOpacity,
+                        opacity: 0.5,
+                        weight: 1
+                      }}
+                    />
+
+                    <CircleMarker
+                      center={road.coords[Math.floor(road.coords.length / 2)]}
+                      radius={beaconRadius}
                       pathOptions={{
                         color: '#fff',
                         fillColor: color,
@@ -1293,6 +1367,23 @@ function App() {
                 )
               })}
             </MapContainer>
+
+            <motion.div
+              className="absolute left-4 bottom-4 z-[1000] glass-card rounded-xl p-4"
+              initial={{ x: -40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-amber-400"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                />
+                <p className="text-xs text-gray-300 font-semibold">Live Route Flow</p>
+              </div>
+              <p className="text-[11px] text-gray-400">Animated vectors are synced to congestion intensity.</p>
+            </motion.div>
             
             <motion.div 
               className="absolute top-4 right-4 z-[1000] glass-card rounded-xl p-4"
@@ -1301,13 +1392,13 @@ function App() {
               transition={{ delay: 0.5 }}
             >
               <p className="text-xs text-gray-400 mb-3 font-medium">Congestion Level</p>
-              <div className="space-y-2">
+                <div className="space-y-2">
                 {[
-                  { label: 'Smooth (<30%)', color: '#10b981' },
-                  { label: 'Light (30-50%)', color: '#84cc16' },
-                  { label: 'Moderate (50-65%)', color: '#f59e0b' },
-                  { label: 'Heavy (65-80%)', color: '#f97316' },
-                  { label: 'Severe (>80%)', color: '#ef4444' }
+                  { label: 'Smooth (<30%)', color: '#2a9d8f' },
+                  { label: 'Light (30-50%)', color: '#e9c46a' },
+                  { label: 'Moderate (50-65%)', color: '#f4a261' },
+                  { label: 'Heavy (65-80%)', color: '#e76f51' },
+                  { label: 'Severe (>80%)', color: '#c1121f' }
                 ].map(item => (
                   <div key={item.label} className="flex items-center gap-2">
                     <motion.div 
@@ -1347,7 +1438,7 @@ function App() {
                   key={model.name}
                   className={`p-8 rounded-[24px] border transition-all duration-500 ${
                     isWinner 
-                      ? 'bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border-cyan-500/40 shadow-2xl shadow-cyan-500/10' 
+                      ? 'bg-gradient-to-br from-amber-500/10 to-emerald-500/10 border-amber-500/40 shadow-2xl shadow-amber-500/10' 
                       : 'bg-white/[0.02] border-white/5'
                   }`}
                   whileHover={{ y: -8, scale: 1.02 }}
@@ -1356,7 +1447,7 @@ function App() {
                     <h4 className="text-lg font-space font-bold text-white tracking-tight">{model.name}</h4>
                     {isWinner && (
                       <motion.div 
-                        className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-lg"
+                        className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-amber-400 to-emerald-500 rounded-lg"
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
                       >
@@ -1368,8 +1459,8 @@ function App() {
                   
                   <div className="space-y-6">
                     {[
-                      { label: 'MAE', value: model.mae, color: 'from-cyan-400 to-blue-500' },
-                      { label: 'RMSE', value: model.rmse, color: 'from-violet-400 to-purple-500' },
+                      { label: 'MAE', value: model.mae, color: 'from-amber-400 to-emerald-500' },
+                      { label: 'RMSE', value: model.rmse, color: 'from-emerald-400 to-amber-500' },
                       { label: 'R-Squared', value: model.r2, color: 'from-pink-400 to-rose-500' }
                     ].map(metric => (
                       <div key={metric.label}>
@@ -1400,14 +1491,14 @@ function App() {
           transition={{ delay: 0.5 }}
           className="text-center py-12 border-t border-white/5 relative"
         >
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
           <motion.div 
             className="flex items-center justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-600 mb-6"
             initial={{ y: 20 }}
             animate={{ y: 0 }}
           >
             <span className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
               <span className="text-gray-300">TrafficIQ Core</span>
             </span>
             <span>CNN-LSTM Architecture</span>
@@ -1472,8 +1563,8 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
       <div 
         className="glass-card p-6 rounded-[24px] transition-all duration-500 overflow-hidden"
         style={{ 
-          borderColor: isSelected ? '#22d3ee' : 'rgba(255,255,255,0.05)',
-          background: isSelected ? 'rgba(34, 211, 238, 0.05)' : 'rgba(15, 23, 42, 0.4)',
+          borderColor: isSelected ? '#f4a261' : 'rgba(255,255,255,0.05)',
+          background: isSelected ? 'rgba(244, 162, 97, 0.06)' : 'rgba(15, 23, 42, 0.4)',
           boxShadow: isSelected 
             ? `0 0 40px ${level.color}30` 
             : `0 20px 40px rgba(0,0,0,0.3)`,
@@ -1531,7 +1622,7 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-3 group-hover:bg-white/[0.05] transition-colors">
               <div className="flex items-center gap-2 mb-1">
-                <Gauge className="w-3 h-3 text-cyan-400" />
+                <Gauge className="w-3 h-3 text-amber-400" />
                 <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Velocity</span>
               </div>
               <p className="text-xl font-space font-bold text-white tracking-tighter">
@@ -1541,7 +1632,7 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
             </div>
             <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-3 group-hover:bg-white/[0.05] transition-colors">
               <div className="flex items-center gap-2 mb-1">
-                <Users className="w-3 h-3 text-violet-400" />
+                <Users className="w-3 h-3 text-emerald-400" />
                 <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Volume</span>
               </div>
               <p className="text-xl font-space font-bold text-white tracking-tighter">
@@ -1579,11 +1670,12 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
 }
 
 function getCongestionLevel(value) {
-  if (value < 0.3) return { label: 'Smooth', color: '#10b981' }
-  if (value < 0.5) return { label: 'Light', color: '#84cc16' }
-  if (value < 0.65) return { label: 'Moderate', color: '#f59e0b' }
-  if (value < 0.8) return { label: 'Heavy', color: '#f97316' }
-  return { label: 'Severe', color: '#ef4444' }
+  if (value < 0.3) return { label: 'Smooth', color: '#2a9d8f' }
+  if (value < 0.5) return { label: 'Light', color: '#e9c46a' }
+  if (value < 0.65) return { label: 'Moderate', color: '#f4a261' }
+  if (value < 0.8) return { label: 'Heavy', color: '#e76f51' }
+  return { label: 'Severe', color: '#c1121f' }
 }
 
 export default App
+
