@@ -94,7 +94,7 @@ const MOCK_METRICS = {
   best_model: "CNN-LSTM"
 }
 
-const API_URL = ''
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 const PARTICLE_COUNT = 50
 const BUBBLE_COUNT = 15
@@ -126,11 +126,11 @@ const ROAD_SEGMENTS = {
 }
 
 const getCongestionColor = (congestion) => {
-  if (congestion < 0.3) return '#10b981'
-  if (congestion < 0.5) return '#84cc16'
-  if (congestion < 0.65) return '#f59e0b'
-  if (congestion < 0.8) return '#f97316'
-  return '#ef4444'
+  if (congestion < 0.3) return '#10b981' // Emerald
+  if (congestion < 0.5) return '#22d3ee' // Cyan
+  if (congestion < 0.65) return '#f59e0b' // Amber
+  if (congestion < 0.8) return '#f97316' // Orange
+  return '#f43f5e' // Rose/Pink
 }
 
 function generateParticles() {
@@ -141,7 +141,7 @@ function generateParticles() {
     size: Math.random() * 4 + 1,
     duration: Math.random() * 20 + 10,
     delay: Math.random() * 10,
-    color: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'][Math.floor(Math.random() * 5)]
+    color: ['#22d3ee', '#8b5cf6', '#f472b6', '#10b981', '#f59e0b'][Math.floor(Math.random() * 5)]
   }))
 }
 
@@ -152,7 +152,7 @@ function generateBubbles() {
     size: Math.random() * 60 + 20,
     duration: Math.random() * 15 + 10,
     delay: Math.random() * 5,
-    color: ['rgba(59, 130, 246, 0.1)', 'rgba(139, 92, 246, 0.1)', 'rgba(6, 182, 212, 0.1)'][Math.floor(Math.random() * 3)]
+    color: ['rgba(34, 211, 238, 0.1)', 'rgba(139, 92, 246, 0.1)', 'rgba(244, 114, 182, 0.1)'][Math.floor(Math.random() * 3)]
   }))
 }
 
@@ -221,8 +221,8 @@ const AnimatedGrid = () => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div className="absolute inset-0" style={{
       backgroundImage: `
-        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px)
+        linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px)
       `,
       backgroundSize: '50px 50px',
       animation: 'gridMove 20s linear infinite'
@@ -332,7 +332,7 @@ const CircularProgress = ({ value, size = 120, strokeWidth = 8 }) => {
       />
       <defs>
         <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="0%" stopColor="#22d3ee" />
           <stop offset="100%" stopColor="#8b5cf6" />
         </linearGradient>
       </defs>
@@ -403,10 +403,10 @@ const RadarChartComponent = ({ data }) => (
       <Radar
         name="Performance"
         dataKey="A"
-        stroke="#3b82f6"
-        fill="#3b82f6"
+        stroke="#22d3ee"
+        fill="#22d3ee"
         fillOpacity={0.3}
-        strokeWidth={2}
+        strokeWidth={3}
       />
       <Radar
         name="Efficiency"
@@ -414,7 +414,7 @@ const RadarChartComponent = ({ data }) => (
         stroke="#8b5cf6"
         fill="#8b5cf6"
         fillOpacity={0.2}
-        strokeWidth={2}
+        strokeWidth={3}
       />
     </RadarChart>
   </ResponsiveContainer>
@@ -577,9 +577,9 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center relative overflow-hidden">
         <FloatingParticles />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-purple-900/30 to-pink-900/30 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-violet-900/20 to-pink-900/20 animate-pulse" />
         
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -588,12 +588,12 @@ function App() {
           className="text-center z-10 relative"
         >
           <div className="relative mb-8">
-            <PulsingRing size={150} color="#3b82f6" />
+            <PulsingRing size={150} color="#22d3ee" />
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="w-24 h-24 border-4 border-blue-500 border-t-transparent rounded-full"
+                className="w-24 h-24 border-4 border-cyan-500 border-t-transparent rounded-full"
               />
             </div>
           </div>
@@ -601,15 +601,15 @@ function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-3xl text-white font-light tracking-widest mb-4"
+            className="text-3xl text-white font-space font-light tracking-[0.2em] mb-4"
           >
-            TRAFFIC<span className="text-blue-400 font-bold">IQ</span>
+            TRAFFIC<span className="text-cyan-400 font-bold">IQ</span>
           </motion.p>
           <motion.div 
             initial={{ width: 0 }}
-            animate={{ width: 200 }}
+            animate={{ width: 240 }}
             transition={{ duration: 2, delay: 0.5 }}
-            className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto"
+            className="h-0.5 bg-gradient-to-r from-cyan-500 via-violet-500 to-pink-500 rounded-full mx-auto"
           />
         </motion.div>
       </div>
@@ -646,25 +646,27 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 font-inter relative overflow-hidden">
+    <div className="min-h-screen bg-dark-950 font-inter relative overflow-hidden">
+      <div className="scanline" />
+      <div className="noise-bg" />
       <AnimatedGrid />
       <FloatingParticles />
       <FloatingBubbles />
       
       <motion.div
-        className="fixed top-0 left-0 w-96 h-96 rounded-full pointer-events-none"
+        className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
           x: parallaxX,
           y: parallaxY,
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-          filter: 'blur(60px)'
+          background: 'radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, transparent 70%)',
+          filter: 'blur(80px)'
         }}
       />
       
-      <MorphingShape className="top-20 -left-48" color="#3b82f6" />
+      <MorphingShape className="top-20 -left-48" color="#22d3ee" />
       <MorphingShape className="bottom-20 -right-48" color="#8b5cf6" />
 
-      <nav className="glass-card border-b border-white/10 px-6 py-4 sticky top-0 z-50 bg-dark-900/80 backdrop-blur-2xl">
+      <nav className="glass-card border-b border-white/5 px-6 py-4 sticky top-0 z-50 bg-dark-950/40 backdrop-blur-3xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <motion.div 
             initial={{ x: -50, opacity: 0 }}
@@ -676,55 +678,55 @@ function App() {
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 via-violet-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
                 <Navigation className="w-7 h-7 text-white" />
               </div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-40 -z-10" />
+              <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-2xl blur-lg opacity-20 -z-10" />
             </motion.div>
             <div>
               <motion.h1 
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="text-2xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent"
+                className="text-2xl font-space font-bold bg-gradient-to-r from-white via-cyan-100 to-violet-100 bg-clip-text text-transparent"
               >
                 TrafficIQ
               </motion.h1>
-              <p className="text-xs text-gray-500">Real-Time Traffic Intelligence</p>
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-medium">Urban Flow Intelligence</p>
             </div>
           </motion.div>
           
           <motion.div 
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="flex items-center gap-6"
+            className="flex items-center gap-8"
           >
-            <motion.div
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/30"
-              whileHover={{ scale: 1.05 }}
-            >
-              <motion.span 
-                className="relative flex h-3 w-3"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+            <div className="hidden md:flex items-center gap-4 px-4 py-2 rounded-2xl bg-white/5 border border-white/5">
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-tighter text-gray-500">System Pulse</p>
+                <p className="text-sm text-cyan-400 font-mono font-bold tracking-tighter">SYNCHRONIZED</p>
+              </div>
+              <motion.div 
+                className="w-8 h-8 rounded-full border border-cyan-500/30 flex items-center justify-center"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               >
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
-              </motion.span>
-              <span className="text-emerald-400 text-sm font-medium">LIVE</span>
-            </motion.div>
+                <Cpu className="w-4 h-4 text-cyan-400" />
+              </motion.div>
+            </div>
+
             <div className="text-right">
-              <p className="text-xs text-gray-500">Last Updated</p>
+              <p className="text-[10px] uppercase tracking-tighter text-gray-500">Live Timestamp</p>
               <p className="text-sm text-white font-mono">
                 {lastUpdate ? lastUpdate.toLocaleTimeString() : '--:--'}
               </p>
             </div>
             <motion.button 
               onClick={fetchData}
-              className="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-              whileHover={{ rotate: 180 }}
+              className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all"
+              whileHover={{ rotate: 180, scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <RefreshCw className="w-5 h-5 text-gray-400" />
+              <RefreshCw className="w-5 h-5 text-cyan-400" />
             </motion.button>
           </motion.div>
         </div>
@@ -736,217 +738,218 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="relative mb-12"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-xl" />
-          <TiltCard className="relative glass-card p-10 rounded-3xl overflow-hidden" intensity={10}>
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-500/30 to-transparent rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-purple-500/20 to-transparent rounded-full blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-pink-500/10 rounded-3xl blur-3xl" />
+          <TiltCard className="relative glass-card p-12 rounded-[32px] overflow-hidden" intensity={5}>
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-cyan-500/10 to-transparent rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-violet-500/10 to-transparent rounded-full blur-[80px]" />
             
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 relative">
-              <div>
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12 relative">
+              <div className="flex-1">
                 <motion.div 
-                  className="flex items-center gap-3 mb-3"
+                  className="flex items-center gap-4 mb-4"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <MapPin className="w-6 h-6 text-blue-400" />
-                  </motion.div>
+                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+                    <MapPin className="w-5 h-5 text-cyan-400" />
+                  </div>
                   <motion.h2 
-                    className="text-4xl font-bold text-white"
+                    className="text-5xl font-space font-bold text-white tracking-tight"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                   >
-                    Delhi/NCR
+                    Delhi / NCR
                   </motion.h2>
                 </motion.div>
                 
                 <motion.div 
-                  className="flex items-center gap-4 text-gray-400"
+                  className="flex items-center gap-6 text-gray-400"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <Clock className="w-4 h-4 text-violet-400" />
+                    <span className="text-sm">{currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
                   </div>
-                  <span className="text-gray-600">•</span>
+                  <div className="w-1 h-1 rounded-full bg-gray-700" />
                   <motion.span 
-                    className="font-mono text-xl text-white"
-                    animate={{ opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 1, repeat: Infinity }}
+                    className="font-mono text-2xl text-white font-bold tracking-tighter"
                   >
                     {currentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </motion.span>
                 </motion.div>
                 
-                <motion.div 
-                  className="flex items-center gap-4 mt-6"
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-gray-400 border border-white/10 backdrop-blur-sm">
-                    {sensors.length} Roads Monitored
-                  </span>
-                  <span className="px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-gray-400 border border-white/10 backdrop-blur-sm">
-                    {sensors.length > 0 ? (sensors.reduce((sum, s) => sum + s.speed, 0) / sensors.length).toFixed(0) : 0} km/h Avg
-                  </span>
-                </motion.div>
+                <div className="flex flex-wrap items-center gap-4 mt-8">
+                  <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                    <span className="text-xs font-semibold text-gray-300 tracking-wide uppercase">
+                      {sensors.length} Active Nodes
+                    </span>
+                  </div>
+                  <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
+                    <TrendingUp className="w-4 h-4 text-emerald-400" />
+                    <span className="text-xs font-semibold text-gray-300 tracking-wide uppercase">
+                      {(sensors.reduce((sum, s) => sum + s.speed, 0) / sensors.length).toFixed(0)} KM/H NOMINAL
+                    </span>
+                  </div>
+                </div>
               </div>
               
-              <motion.div 
-                className="flex items-center gap-8"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <div className="relative">
-                  <CircularProgress value={avgCongestion * 100} size={160} strokeWidth={10} />
+              <div className="flex items-center gap-12 bg-white/[0.02] p-8 rounded-[40px] border border-white/5">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-2xl group-hover:bg-cyan-500/30 transition-all duration-500" />
+                  <CircularProgress value={avgCongestion * 100} size={180} strokeWidth={12} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.span 
-                      className="text-5xl font-bold"
+                      className="text-6xl font-space font-bold tracking-tighter"
                       style={{ color: level.color }}
                       key={avgCongestion}
-                      initial={{ scale: 1.3 }}
-                      animate={{ scale: 1 }}
+                      initial={{ scale: 1.3, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
                     >
                       {(avgCongestion * 100).toFixed(0)}%
                     </motion.span>
-                    <span className="text-sm text-gray-400">Congestion</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Congestion</span>
                   </div>
                 </div>
                 
-                <motion.div 
-                  className="px-8 py-4 rounded-2xl backdrop-blur-xl"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${level.color}20, ${level.color}05)`,
-                    border: `1px solid ${level.color}40`,
-                    boxShadow: `0 0 40px ${level.color}30, inset 0 0 20px ${level.color}10`
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <span className="relative flex h-4 w-4 mb-3 mx-auto">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: level.color }} />
-                    <span className="relative inline-flex rounded-full h-4 w-4" style={{ backgroundColor: level.color }} />
-                  </span>
-                  <motion.span 
-                    className="text-2xl font-bold block text-center"
-                    style={{ color: level.color, textShadow: `0 0 20px ${level.color}50` }}
+                <div className="space-y-4">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Flow Status</p>
+                  <motion.div 
+                    className="px-10 py-5 rounded-3xl backdrop-blur-3xl"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${level.color}20, ${level.color}05)`,
+                      border: `1px solid ${level.color}30`,
+                    }}
+                    whileHover={{ scale: 1.05 }}
                   >
-                    {level.label}
-                  </motion.span>
-                </motion.div>
-              </motion.div>
+                    <motion.span 
+                      className="text-3xl font-space font-black block text-center uppercase italic tracking-tighter"
+                      style={{ color: level.color, textShadow: `0 0 20px ${level.color}40` }}
+                    >
+                      {level.label}
+                    </motion.span>
+                    <div className="flex items-center justify-center gap-2 mt-2">
+                      <div className="w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: level.color }} />
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Verified</span>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
             </div>
           </TiltCard>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <TiltCard className="glass-card p-6 rounded-2xl" intensity={5}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
-                <Gauge className="w-5 h-5 text-white" />
+          <TiltCard className="glass-card p-8 rounded-3xl" intensity={3}>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
+                <Gauge className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Congestion Distribution</h3>
+              <div>
+                <h3 className="text-xl font-space font-bold text-white tracking-tight">Congestion Distribution</h3>
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Live Breakdown</p>
+              </div>
             </div>
-            <div className="h-48">
+            <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={congestionDistribution}
                     cx="50%"
                     cy="50%"
-                    innerRadius={45}
-                    outerRadius={75}
-                    paddingAngle={3}
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={8}
                     dataKey="value"
+                    stroke="none"
                   >
                     {congestionDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.color} 
+                        style={{ filter: `drop-shadow(0 0 8px ${entry.color}40)` }}
+                      />
                     ))}
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                      backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                      backdropFilter: 'blur(16px)',
                       border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '12px'
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
                     }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {congestionDistribution.slice(0, 3).map(item => (
-                <motion.div 
-                  key={item.name} 
-                  className="text-center p-2 rounded-lg bg-white/5"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="w-3 h-3 rounded-full mx-auto mb-1" style={{ backgroundColor: item.color, boxShadow: `0 0 10px ${item.color}50` }} />
-                  <span className="text-xs text-gray-400">{item.name}</span>
-                  <p className="text-lg font-bold text-white">{item.value}</p>
-                </motion.div>
+            <div className="grid grid-cols-5 gap-2 mt-6">
+              {congestionDistribution.map(item => (
+                <div key={item.name} className="text-center">
+                  <div className="w-1.5 h-1.5 rounded-full mx-auto mb-2" style={{ backgroundColor: item.color, boxShadow: `0 0 8px ${item.color}` }} />
+                  <p className="text-[10px] font-black text-white">{item.value}</p>
+                </div>
               ))}
             </div>
           </TiltCard>
 
-          <TiltCard className="lg:col-span-2 glass-card p-6 rounded-2xl" intensity={5}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-white" />
+          <TiltCard className="lg:col-span-2 glass-card p-8 rounded-3xl" intensity={2}>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Traffic Flow Analysis</h3>
+                <div>
+                  <h3 className="text-xl font-space font-bold text-white tracking-tight">Traffic Flow Analysis</h3>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Real-Time Predictive Modeling</p>
+                </div>
               </div>
-              <motion.span 
-                className="px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10"
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                Last 30 min
-              </motion.span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5">
+                <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Stream</span>
+              </div>
             </div>
-            
-            <div className="h-48">
+
+            <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={history}>
                   <defs>
                     <linearGradient id="colorActual3D" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.5}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorPredicted3D" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.5}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="time" stroke="#6b7280" fontSize={10} />
-                  <YAxis stroke="#6b7280" fontSize={10} domain={[0, 1]} tickFormatter={(v) => `${(v*100).toFixed(0)}%`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                  <XAxis dataKey="time" stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#475569" fontSize={10} axisLine={false} tickLine={false} domain={[0, 1]} tickFormatter={(v) => `${(v*100).toFixed(0)}%`} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                      backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                      backdropFilter: 'blur(16px)',
                       border: '1px solid rgba(255,255,255,0.1)', 
-                      borderRadius: '12px'
+                      borderRadius: '16px'
                     }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="actual" 
-                    stroke="#10b981" 
+                    stroke="#22d3ee" 
                     fill="url(#colorActual3D)" 
-                    strokeWidth={3}
+                    strokeWidth={4}
+                    style={{ filter: 'drop-shadow(0 0 12px rgba(34, 211, 238, 0.4))' }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="predicted" 
-                    stroke="#3b82f6" 
+                    stroke="#8b5cf6" 
                     fill="url(#colorPredicted3D)" 
                     strokeWidth={2}
                     strokeDasharray="5 5"
@@ -960,63 +963,75 @@ function App() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 rounded-2xl mb-8"
+          className="glass-card p-8 rounded-3xl mb-12"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-              <BarChart className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+              <BarChart className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-white">Road-wise Congestion Levels</h3>
+            <div>
+              <h3 className="text-xl font-space font-bold text-white tracking-tight">Road-wise Congestion Index</h3>
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Top 10 High-Traffic Sectors</p>
+            </div>
           </div>
-          <div className="h-80">
+          <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={sensors.slice().sort((a, b) => b.congestion - a.congestion).slice(0, 10).map(s => ({
-                  name: s.name.length > 18 ? s.name.substring(0, 18) + '...' : s.name,
+                  name: s.name.length > 22 ? s.name.substring(0, 22) + '...' : s.name,
                   fullName: s.name,
                   congestion: (s.congestion * 100).toFixed(0),
                   fill: getCongestionColor(s.congestion)
                 }))}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                margin={{ top: 5, right: 30, left: 140, bottom: 5 }}
+                barSize={12}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" horizontal={false} />
                 <XAxis 
                   type="number" 
                   domain={[0, 100]} 
-                  stroke="#6b7280" 
+                  stroke="#475569" 
                   fontSize={10}
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={(v) => `${v}%`}
                 />
                 <YAxis 
                   type="category" 
                   dataKey="name" 
-                  stroke="#6b7280" 
-                  fontSize={9}
-                  width={95}
+                  stroke="#f8fafc" 
+                  fontSize={11}
+                  width={130}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontWeight: 600 }}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    backdropFilter: 'blur(16px)',
                     border: '1px solid rgba(255,255,255,0.1)', 
-                    borderRadius: '12px'
+                    borderRadius: '16px'
                   }}
                   formatter={(value, name, props) => [`${value}%`, props.payload.fullName]}
                 />
                 <Bar 
                   dataKey="congestion" 
-                  radius={[0, 4, 4, 0]}
-                  style={{ filter: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.3))' }}
+                  radius={[0, 10, 10, 0]}
                 >
                   {sensors.slice().sort((a, b) => b.congestion - a.congestion).slice(0, 10).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={getCongestionColor(entry.congestion)} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={getCongestionColor(entry.congestion)} 
+                      style={{ filter: `drop-shadow(0 0 10px ${getCongestionColor(entry.congestion)}60)` }}
+                    />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
-
         <div className="flex items-center justify-between mb-6">
           <motion.div 
             initial={{ x: -30, opacity: 0 }}
@@ -1086,8 +1101,18 @@ function App() {
         </div>
 
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-8"
-          layout
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.05
+              }
+            }
+          }}
         >
           {filteredSensors.slice(0, 24).map((sensor, index) => (
             <RoadCard3D 
@@ -1100,32 +1125,38 @@ function App() {
           ))}
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <TiltCard className="glass-card p-6 rounded-2xl" intensity={8}>
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                  <Orbit className="w-5 h-5 text-white" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <TiltCard className="glass-card p-8 rounded-3xl" intensity={4}>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                  <Orbit className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Performance Radar</h3>
+                <div>
+                  <h3 className="text-xl font-space font-bold text-white tracking-tight">System Performance Radar</h3>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Multi-dimensional Analysis</p>
+                </div>
               </div>
             </div>
             <RadarChartComponent data={radarData} />
           </TiltCard>
 
-          <TiltCard className="glass-card p-6 rounded-2xl" intensity={8}>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-white" />
+          <TiltCard className="glass-card p-8 rounded-3xl" intensity={4}>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <AlertTriangle className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Live Alerts</h3>
+              <div>
+                <h3 className="text-xl font-space font-bold text-white tracking-tight">Real-Time Traffic Alerts</h3>
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Critical Flow Disruptions</p>
+              </div>
             </div>
             
-            <div className="space-y-3 max-h-80 overflow-y-auto">
+            <div className="space-y-4 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
               {sensors
                 .filter(s => s.congestion > 0.65)
                 .sort((a, b) => b.congestion - a.congestion)
-                .slice(0, 6)
+                .slice(0, 8)
                 .map((sensor, idx) => {
                   const level = getCongestionLevel(sensor.congestion)
                   return (
@@ -1134,26 +1165,34 @@ function App() {
                       initial={{ x: -30, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="p-4 rounded-xl border backdrop-blur-sm"
+                      className="p-4 rounded-2xl border backdrop-blur-3xl group hover:bg-white/[0.02] transition-colors"
                       style={{ 
-                        background: `linear-gradient(135deg, ${level.color}10, transparent)`,
-                        borderColor: `${level.color}30`
+                        background: `linear-gradient(90deg, ${level.color}10, transparent)`,
+                        borderColor: `${level.color}20`
                       }}
-                      whileHover={{ scale: 1.02, x: 5 }}
+                      whileHover={{ x: 8 }}
                     >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-semibold text-white text-sm">{sensor.name}</h4>
-                          <p className="text-xs text-gray-400 mt-1">{sensor.road_type}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${level.color}20` }}>
+                            <Signal className="w-5 h-5" style={{ color: level.color }} />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white text-sm tracking-tight">{sensor.name}</h4>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">{sensor.road_type}</p>
+                          </div>
                         </div>
-                        <motion.span 
-                          className="text-2xl font-bold"
-                          style={{ color: level.color }}
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
-                        >
-                          {(sensor.congestion * 100).toFixed(0)}%
-                        </motion.span>
+                        <div className="text-right">
+                          <motion.span 
+                            className="text-xl font-space font-black block tracking-tighter"
+                            style={{ color: level.color }}
+                            animate={{ opacity: [0.7, 1, 0.7] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            {(sensor.congestion * 100).toFixed(0)}%
+                          </motion.span>
+                          <p className="text-[8px] text-gray-500 font-black uppercase tracking-tighter">Congestion</p>
+                        </div>
                       </div>
                     </motion.div>
                   )
@@ -1288,60 +1327,62 @@ function App() {
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 rounded-2xl mb-8"
+          className="glass-card p-10 rounded-[32px] mb-12"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
-              <Award className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <Cpu className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-white">AI Model Performance</h3>
+            <div>
+              <h3 className="text-xl font-space font-bold text-white tracking-tight">AI Model Benchmark Matrix</h3>
+              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Deep Learning Accuracy Report</p>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {metrics?.models?.map((model, idx) => {
               const isWinner = model.name === metrics.best_model
               return (
                 <motion.div 
                   key={model.name}
-                  className={`p-6 rounded-2xl border transition-all ${
+                  className={`p-8 rounded-[24px] border transition-all duration-500 ${
                     isWinner 
-                      ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20' 
-                      : 'bg-dark-800/50 border-white/5'
+                      ? 'bg-gradient-to-br from-cyan-500/10 to-violet-500/10 border-cyan-500/40 shadow-2xl shadow-cyan-500/10' 
+                      : 'bg-white/[0.02] border-white/5'
                   }`}
-                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-white">{model.name}</h4>
+                  <div className="flex items-center justify-between mb-8">
+                    <h4 className="text-lg font-space font-bold text-white tracking-tight">{model.name}</h4>
                     {isWinner && (
                       <motion.div 
-                        className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"
-                        animate={{ scale: [1, 1.05, 1] }}
+                        className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-lg"
+                        animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
                       >
                         <Zap className="w-3 h-3 text-white" />
-                        <span className="text-xs font-bold text-white">BEST</span>
+                        <span className="text-[9px] font-black text-white uppercase tracking-widest">Optimal</span>
                       </motion.div>
                     )}
                   </div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {[
-                      { label: 'MAE', value: model.mae, color: 'from-blue-500 to-cyan-500' },
-                      { label: 'RMSE', value: model.rmse, color: 'from-emerald-500 to-teal-500' },
-                      { label: 'R²', value: model.r2, color: 'from-amber-500 to-orange-500' }
+                      { label: 'MAE', value: model.mae, color: 'from-cyan-400 to-blue-500' },
+                      { label: 'RMSE', value: model.rmse, color: 'from-violet-400 to-purple-500' },
+                      { label: 'R-Squared', value: model.r2, color: 'from-pink-400 to-rose-500' }
                     ].map(metric => (
                       <div key={metric.label}>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-400">{metric.label}</span>
-                          <span className="text-white font-medium font-mono">{metric.value.toFixed(4)}</span>
+                        <div className="flex justify-between text-[10px] mb-2">
+                          <span className="text-gray-500 font-bold uppercase tracking-widest">{metric.label}</span>
+                          <span className="text-white font-mono font-bold">{metric.value.toFixed(4)}</span>
                         </div>
-                        <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
+                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${(1 - metric.value) * 100}%` }}
-                            transition={{ delay: 0.5 + idx * 0.2, duration: 1 }}
+                            transition={{ delay: 0.5 + idx * 0.2, duration: 1.5, ease: "circOut" }}
                             className={`h-full rounded-full bg-gradient-to-r ${metric.color}`}
-                            style={{ boxShadow: `0 0 10px ${metric.color.includes('blue') ? '#3b82f6' : metric.color.includes('emerald') ? '#10b981' : '#f59e0b'}50` }}
                           />
                         </div>
                       </div>
@@ -1357,24 +1398,24 @@ function App() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-center py-8 border-t border-white/5"
+          className="text-center py-12 border-t border-white/5 relative"
         >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
           <motion.div 
-            className="flex items-center justify-center gap-6 text-sm text-gray-500 mb-4"
+            className="flex items-center justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-600 mb-6"
             initial={{ y: 20 }}
             animate={{ y: 0 }}
           >
             <span className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-blue-400" />
-              <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent font-medium">TrafficIQ</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+              <span className="text-gray-300">TrafficIQ Core</span>
             </span>
-            <span className="text-gray-700">•</span>
-            <span>CNN-LSTM Deep Learning</span>
-            <span className="text-gray-700">•</span>
-            <span>TomTom Traffic API</span>
+            <span>CNN-LSTM Architecture</span>
+            <span>Temporal-Spatial Analysis</span>
           </motion.div>
-          <p className="text-xs text-gray-600">
-            Real-Time Traffic Intelligence for Delhi NCR
+          <p className="text-[10px] text-gray-700 font-medium max-w-md mx-auto leading-relaxed">
+            Proprietary Real-Time Urban Mobility Intelligence for Delhi National Capital Region.
+            Data Powered by TomTom Flow APIs.
           </p>
         </motion.footer>
       </main>
@@ -1388,8 +1429,8 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
   const y = useMotionValue(0)
   const cardRef = useRef(null)
 
-  const rotateX = useTransform(y, [-100, 100], [5, -5])
-  const rotateY = useTransform(x, [-100, 100], [-5, 5])
+  const rotateX = useTransform(y, [-100, 100], [10, -10])
+  const rotateY = useTransform(x, [-100, 100], [-10, 10])
 
   const handleMouseMove = (e) => {
     const rect = cardRef.current?.getBoundingClientRect()
@@ -1416,40 +1457,48 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      className="relative cursor-pointer"
+      className="relative cursor-pointer group"
       style={{
         rotateX,
         rotateY,
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        perspective: 1000
       }}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.03, z: 50 }}
+      whileHover={{ scale: 1.02, z: 50 }}
     >
       <div 
-        className="glass-card p-5 rounded-2xl transition-all duration-300"
+        className="glass-card p-6 rounded-[24px] transition-all duration-500 overflow-hidden"
         style={{ 
-          borderColor: isSelected ? '#3b82f6' : `${level.color}30`,
+          borderColor: isSelected ? '#22d3ee' : 'rgba(255,255,255,0.05)',
+          background: isSelected ? 'rgba(34, 211, 238, 0.05)' : 'rgba(15, 23, 42, 0.4)',
           boxShadow: isSelected 
-            ? `0 0 40px ${level.color}40` 
-            : `0 10px 40px ${level.color}15`,
-          transform: 'translateZ(20px)'
+            ? `0 0 40px ${level.color}30` 
+            : `0 20px 40px rgba(0,0,0,0.3)`,
         }}
       >
-        <div className="flex items-start justify-between mb-4" style={{ transform: 'translateZ(30px)' }}>
+        <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: `${level.color}40` }} />
+        <div className="absolute top-0 left-0 w-1/3 h-1" style={{ backgroundColor: level.color }} />
+
+        <div className="flex items-start justify-between mb-6" style={{ transform: 'translateZ(40px)' }}>
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-white text-sm truncate">{sensor.name}</h4>
-            <span className="px-2 py-1 rounded text-[10px] font-medium bg-white/5 text-gray-400 border border-white/10 mt-1 inline-block">
-              {sensor.road_type}
-            </span>
+            <h4 className="font-space font-bold text-white text-base truncate tracking-tight">{sensor.name}</h4>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-white/5 text-gray-400 border border-white/5">
+                {sensor.road_type}
+              </span>
+              <div className="w-1 h-1 rounded-full bg-gray-700" />
+              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">{sensor.sensor_id}</span>
+            </div>
           </div>
           <motion.div 
-            className="px-3 py-1 rounded-lg text-xs font-bold"
+            className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest italic"
             style={{ 
-              backgroundColor: `${level.color}20`, 
+              backgroundColor: `${level.color}15`, 
               color: level.color,
-              boxShadow: `0 0 15px ${level.color}30`
+              border: `1px solid ${level.color}30`
             }}
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -1458,95 +1507,73 @@ function RoadCard3D({ sensor, index, isSelected, onClick }) {
           </motion.div>
         </div>
 
-        <div className="mb-4" style={{ transform: 'translateZ(20px)' }}>
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Congestion</span>
-            <span className="font-bold" style={{ color: level.color }}>
-              {(sensor.congestion * 100).toFixed(0)}%
-            </span>
+        <div className="space-y-4" style={{ transform: 'translateZ(30px)' }}>
+          <div>
+            <div className="flex justify-between items-end mb-2">
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Congestion Index</span>
+              <span className="text-xl font-space font-black tracking-tighter" style={{ color: level.color }}>
+                {(sensor.congestion * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px]">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${sensor.congestion * 100}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="h-full rounded-full relative"
+                style={{ backgroundColor: level.color }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent" />
+              </motion.div>
+            </div>
           </div>
-          <div className="h-2 bg-dark-700 rounded-full overflow-hidden">
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: `${sensor.congestion * 100}%` }}
-              transition={{ duration: 0.8 }}
-              className="h-full rounded-full"
-              style={{ 
-                backgroundColor: level.color,
-                boxShadow: `0 0 15px ${level.color}80`
-              }}
-            />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-3 group-hover:bg-white/[0.05] transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <Gauge className="w-3 h-3 text-cyan-400" />
+                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Velocity</span>
+              </div>
+              <p className="text-xl font-space font-bold text-white tracking-tighter">
+                {sensor.speed.toFixed(0)} 
+                <span className="text-[10px] font-normal text-gray-500 ml-1 uppercase">kmh</span>
+              </p>
+            </div>
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-3 group-hover:bg-white/[0.05] transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="w-3 h-3 text-violet-400" />
+                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Volume</span>
+              </div>
+              <p className="text-xl font-space font-bold text-white tracking-tighter">
+                {sensor.volume >= 1000 ? (sensor.volume / 1000).toFixed(1) : sensor.volume.toFixed(0)}
+                <span className="text-[10px] font-normal text-gray-500 ml-1 uppercase">{sensor.volume >= 1000 ? 'K' : ''}/h</span>
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-4" style={{ transform: 'translateZ(15px)' }}>
-          <div className="bg-dark-800/50 rounded-xl p-3">
-            <p className="text-[10px] text-gray-500 flex items-center gap-1 mb-1">
-              <Car className="w-3 h-3" />
-              Speed
-            </p>
-            <p className="text-lg font-bold text-white">
-              {sensor.speed.toFixed(0)} 
-              <span className="text-[10px] font-normal text-gray-500 ml-1">km/h</span>
-            </p>
-          </div>
-          <div className="bg-dark-800/50 rounded-xl p-3">
-            <p className="text-[10px] text-gray-500 flex items-center gap-1 mb-1">
-              <Users className="w-3 h-3" />
-              Volume
-            </p>
-            <p className="text-lg font-bold text-white">
-              {sensor.volume >= 1000 ? (sensor.volume / 1000).toFixed(1) : sensor.volume.toFixed(0)}
-              <span className="text-[10px] font-normal text-gray-500 ml-1">{sensor.volume >= 1000 ? 'K' : ''}/hr</span>
-            </p>
-          </div>
-        </div>
-
-        <div className="h-12" style={{ transform: 'translateZ(10px)' }}>
+        <div className="mt-6 h-10 opacity-40 group-hover:opacity-100 transition-opacity" style={{ transform: 'translateZ(20px)' }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={sparklineData}>
               <defs>
-                <linearGradient id={`gradient3d-${sensor.sensor_id}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={level.color} stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor={level.color} stopOpacity={0}/>
+                <linearGradient id={`cardGradient-${sensor.sensor_id}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={level.color} stopOpacity={0.4}/>
+                  <stop offset="100%" stopColor={level.color} stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <Area 
                 type="monotone" 
                 dataKey="value" 
                 stroke={level.color} 
-                fill={`url(#gradient3d-${sensor.sensor_id})`}
+                fill={`url(#cardGradient-${sensor.sensor_id})`}
                 strokeWidth={2}
-                style={{ filter: `drop-shadow(0 0 5px ${level.color}80)` }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5" style={{ transform: 'translateZ(10px)' }}>
-          <span className="text-[10px] text-gray-500">{sensor.sensor_id}</span>
-          <div className="flex items-center gap-1">
-            {Math.random() > 0.5 ? (
-              <motion.div animate={{ y: [-2, 2, -2] }} transition={{ duration: 1, repeat: Infinity }}>
-                <ChevronUp className="w-3 h-3 text-red-400" />
-              </motion.div>
-            ) : (
-              <motion.div animate={{ y: [2, -2, 2] }} transition={{ duration: 1, repeat: Infinity }}>
-                <ChevronDown className="w-3 h-3 text-emerald-400" />
-              </motion.div>
-            )}
-            <span className="text-[10px] text-gray-500">vs 1h ago</span>
-          </div>
-        </div>
+        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-br from-transparent to-white/5 rounded-full blur-2xl pointer-events-none" />
       </div>
-      
-      <div 
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        style={{
-          background: `linear-gradient(135deg, ${level.color}20, transparent 50%)`,
-          transform: 'translateZ(-10px)'
-        }}
-      />
     </motion.div>
   )
 }

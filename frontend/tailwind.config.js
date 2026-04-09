@@ -8,17 +8,19 @@ export default {
     extend: {
       colors: {
         'dark': {
-          900: '#0a0e1a',
-          800: '#111827',
-          700: '#1a2234',
-          600: '#2d3748',
+          950: '#020617',
+          900: '#0f172a',
+          800: '#1e293b',
+          700: '#334155',
+          600: '#475569',
         },
         'accent': {
-          blue: '#3b82f6',
-          green: '#10b981',
-          yellow: '#f59e0b',
-          orange: '#f97316',
-          red: '#ef4444',
+          cyan: '#22d3ee',
+          violet: '#8b5cf6',
+          pink: '#f472b6',
+          emerald: '#10b981',
+          amber: '#f59e0b',
+          rose: '#f43f5e',
         }
       },
       fontFamily: {

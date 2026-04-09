@@ -16,11 +16,15 @@ html {
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #0a0e1a;
+  background: #020617;
   color: #f0f4f8;
   min-height: 100vh;
   overflow-x: hidden;
-  perspective: 1000px;
+  perspective: 1500px;
+}
+
+h1, h2, h3, h4, .font-space {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 @keyframes float {
@@ -34,8 +38,8 @@ body {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 60px rgba(59, 130, 246, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6), 0 0 80px rgba(59, 130, 246, 0.4); }
+  0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.4), 0 0 60px rgba(34, 211, 238, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(34, 211, 238, 0.6), 0 0 80px rgba(34, 211, 238, 0.4); }
 }
 
 @keyframes gradient-shift {
@@ -114,33 +118,33 @@ body {
 .animate-breathe { animation: breathe 4s ease-in-out infinite; }
 
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: linear-gradient(180deg, #0a0e1a, #111827);
+  background: #020617;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #3b82f6, #8b5cf6, #ec4899);
-  border-radius: 6px;
-  border: 2px solid #0a0e1a;
+  background: linear-gradient(180deg, #22d3ee, #8b5cf6);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #60a5fa, #a78bfa, #f472b6);
+  background: linear-gradient(180deg, #60a5fa, #a78bfa);
 }
 
 .glass-card {
-  background: rgba(17, 24, 39, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 24px;
   position: relative;
   overflow: hidden;
   transform-style: preserve-3d;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-card::before {
@@ -150,14 +154,22 @@ body {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.2), transparent);
 }
 
 .glass-card::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.08), transparent 50%);
+  background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.05), transparent 70%);
+  pointer-events: none;
+}
+
+.noise-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
 }
 
